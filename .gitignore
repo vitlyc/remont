@@ -1,4 +1,11 @@
+# Игнорирование папок node_modules для client и server
+/client/node_modules/
+/server/node_modules/
+
+# Логи
+*.log
+
+# .env файлы
 *.env
-./client/node-modules
-./server/node-modules
-README.md
+
+
