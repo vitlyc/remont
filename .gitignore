@@ -1,0 +1,4 @@
+*.env
+./client/node-modules
+./server/node-modules
+README.md
