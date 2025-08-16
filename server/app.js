@@ -7,6 +7,12 @@ const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 
 dotenv.config({ quiet: true });
+// const corsOptions = {
+//   origin: "http://localhost:5173",
+//   credentials: true,
+//   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+//   allowedHeaders: ["Content-Type", "Authorization"],
+// };
 
 const app = express();
 
@@ -16,7 +22,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan("common"));
-app.use(cors());
+// app.use(cors(corsOptions));
+// app.options("*", cors(corsOptions));
 
 // routes
 app.use("/api/v1", require("./routes/users"));

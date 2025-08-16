@@ -1,29 +1,46 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Routes, Route } from "react-router";
-import { Box, CssBaseline, Avatar } from "@mui/material";
-
+import { Box, CssBaseline } from "@mui/material";
 import NavTabs from "./components/NavTabs/NavTabs";
 import DropdownButton from "./components/DropdownButton";
 import Cases from "./scenes/Cases";
 import Statistics from "./scenes/Statistics";
+import AppModal from "@/components/Modal/AppModal";
+import LoginForm from "@/components/Auth/LoginForm";
+import { useLogoutMutation } from "@/store/authApi";
 
-function App() {
+export default function App() {
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [logout] = useLogoutMutation();
+
+  const openLogin = () => setLoginOpen(true);
+  const closeLogin = () => setLoginOpen(false);
+
+  const onLogout = useCallback(async () => {
+    try {
+      await logout().unwrap();
+    } catch (e) {
+      console.error(e);
+    }
+  }, [logout]);
+
   return (
     <div className="app">
       <CssBaseline />
       <Box
         margin="0 auto"
         maxWidth="1400px"
-        padding="1rem 2rem 4rem 2rem"
+        p="1rem 2rem 4rem 2rem"
         display="flex"
         flexDirection="column"
       >
         <Box display="flex" alignItems="center">
           <NavTabs />
-          <Box display="flex" alignItems="center">
-            <DropdownButton />
+          <Box display="flex" alignItems="center" ml="auto">
+            <DropdownButton onLoginClick={openLogin} onLogoutClick={onLogout} />
           </Box>
         </Box>
+
         <Box>
           <Routes>
             <Route path="/" element={<Statistics />} />
@@ -33,8 +50,16 @@ function App() {
           </Routes>
         </Box>
       </Box>
+
+      <AppModal
+        open={loginOpen}
+        onClose={closeLogin}
+        title="Вход"
+        maxWidth="xs"
+        fullWidth
+      >
+        <LoginForm onClose={closeLogin} />
+      </AppModal>
     </div>
   );
 }
-
-export default App;

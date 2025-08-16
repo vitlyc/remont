@@ -1,14 +1,26 @@
 import * as React from "react";
-import { Box, Grid, Typography, Fab } from "@mui/material";
+import {
+  Box,
+  Grid,
+  Typography,
+  Fab,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { useCases } from "@/hooks/useCases";
 import CaseCard from "@/components/Card/Card";
-import CaseDialog from "@/components/CaseDialog/CaseDialog";
+import AppModal from "@/components/Modal/AppModal";
+import CaseForm from "@/components/CaseForm/CaseForm";
 
 function makeEmptyCase() {
   return {
-    __isNew: true, // внутренний флаг — понять, создаём новую или редактируем
-    id: undefined, // присвоим при сохранении
+    __isNew: true,
+    id: undefined,
     account: "",
     objectAddress: "",
     area: "",
@@ -24,16 +36,7 @@ function makeEmptyCase() {
         share: "",
       },
     ],
-    submission: {
-      date: "",
-      court: {
-        type: "",
-        name: "",
-        address: "",
-      },
-      // если у тебя есть блок claim — можешь раскомментировать:
-      // claim: { principal: "", penalty: "", total: "", stateDuty: 4000 },
-    },
+    submission: { date: "", court: { type: "", name: "", address: "" } },
     comments: "",
   };
 }
@@ -41,29 +44,20 @@ function makeEmptyCase() {
 export default function Cases() {
   const { cases, addCase, updateCase, removeCase } = useCases();
   const [open, setOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState(null);
+  const [form, setForm] = React.useState(null);
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
 
   const handleOpenEdit = (item) => {
-    setSelected(item);
+    setForm(item);
     setOpen(true);
   };
-
   const handleOpenCreate = () => {
-    setSelected(makeEmptyCase());
+    setForm(makeEmptyCase());
     setOpen(true);
   };
-
   const handleClose = () => {
     setOpen(false);
-    setSelected(null);
-  };
-
-  const handleDelete = (id) => {
-    console.log(id);
-    removeCase(id);
-    // если удаляем текущее — закрываем диалог
-    setOpen(false);
-    setSelected(null);
+    setForm(null);
   };
 
   const getNextId = React.useCallback(() => {
@@ -73,17 +67,32 @@ export default function Cases() {
     return maxId + 1;
   }, [cases]);
 
-  const handleSave = (next) => {
-    if (next.__isNew) {
+  const handleSave = () => {
+    if (!form) return;
+    if (form.__isNew) {
       const id = getNextId();
-      const toAdd = { ...next, id };
+      const toAdd = { ...form, id };
       delete toAdd.__isNew;
       addCase(toAdd);
     } else {
-      updateCase(next.id, next);
+      updateCase(form.id, form);
     }
     handleClose();
   };
+
+  const askDelete = () => setConfirmOpen(true);
+  const cancelDelete = () => setConfirmOpen(false);
+  const confirmDelete = () => {
+    setConfirmOpen(false);
+    if (form?.id != null) removeCase(form.id);
+    handleClose();
+  };
+
+  const title = form
+    ? form.__isNew
+      ? "Новое дело"
+      : `Редактирование дела #${form.id}`
+    : "";
 
   return (
     <Box sx={{ position: "relative" }}>
@@ -99,15 +108,53 @@ export default function Cases() {
         ))}
       </Grid>
 
-      <CaseDialog
+      <AppModal
         open={open}
         onClose={handleClose}
-        data={selected}
-        onSave={handleSave}
-        onDelete={handleDelete} // <- вот тут
-      />
+        title={title}
+        leftActions={
+          !form?.__isNew && (
+            <Button
+              onClick={askDelete}
+              color="error"
+              startIcon={<DeleteOutlineIcon />}
+              variant="text"
+            >
+              Удалить
+            </Button>
+          )
+        }
+        rightActions={
+          <>
+            <Button onClick={handleClose} variant="outlined">
+              Отмена
+            </Button>
+            <Button onClick={handleSave} variant="contained">
+              Сохранить
+            </Button>
+          </>
+        }
+        maxWidth="md"
+        fullWidth
+      >
+        <CaseForm value={form} onChange={setForm} />
+      </AppModal>
 
-      {/* Floating Action Button — создать новое дело */}
+      <Dialog open={confirmOpen} onClose={cancelDelete}>
+        <DialogTitle>Удалить дело?</DialogTitle>
+        <DialogContent dividers>
+          Подтвердите удаление дела {form?.id ? `#${form.id}` : ""}.
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={cancelDelete} variant="outlined">
+            Нет
+          </Button>
+          <Button onClick={confirmDelete} color="error" variant="contained">
+            Да, удалить
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <Fab
         color="primary"
         aria-label="add"
