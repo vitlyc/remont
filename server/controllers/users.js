@@ -5,40 +5,43 @@ const cookieOpts = {
   httpOnly: true,
   sameSite: "lax",
   path: "/",
-  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дней
+  maxAge: 7 * 24 * 60 * 60 * 1000,
 };
+
+const setUid = (res, id) => res.cookie("uid", id.toString(), cookieOpts);
 
 exports.register = async (req, res, next) => {
   try {
-    const user = await User.create(req.body);
-
-    res.cookie("uid", user._id.toString(), cookieOpts);
-
+    const user = await User.create(req.body); // пароль хеширует модель
+    setUid(res, user._id);
     const obj = user.toObject();
-    delete obj.password; // не отдаём пароль
-
-    res.status(201).json({ user: obj });
-  } catch (err) {
-    next(err);
+    delete obj.password;
+    res.status(201).json(obj);
+  } catch (e) {
+    next(e);
   }
 };
 
 exports.login = async (req, res, next) => {
   try {
-    const user = await User.findOne({
-      email: (req.body.email || "").toLowerCase(),
-      password: req.body.password, // без хеша — прямое сравнение
-    });
-
+    const user = await User.findOne({ email: req.body.email }).select(
+      "+password"
+    );
     if (!user) return res.status(401).json({ error: "invalid credentials" });
 
-    res.cookie("uid", user._id.toString(), cookieOpts);
+    const ok = await user.comparePassword(req.body.password);
+    if (!ok) return res.status(401).json({ error: "invalid credentials" });
 
+    setUid(res, user._id);
     const obj = user.toObject();
-    delete obj.password; // не отдаём пароль
-
-    res.status(201).json({ user: obj });
+    delete obj.password;
+    res.status(201).json(obj);
   } catch (e) {
     next(e);
   }
+};
+
+exports.logout = (req, res) => {
+  res.clearCookie("uid", { httpOnly: true, sameSite: "lax", path: "/" });
+  res.json({ ok: true });
 };

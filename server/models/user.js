@@ -1,4 +1,6 @@
+// server/models/user.js
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema(
   {
@@ -13,25 +15,26 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique: true,
       trim: true,
-      minlength: 4,
-      maxlength: 20,
+      lowercase: true,
+      unique: true,
     },
-    password: {
-      type: String,
-      required: true,
-      minlength: 4,
-      select: false, // не возвращаем по умолчанию
-    },
-    role: {
-      type: String,
-      enum: ["user", "admin"],
-      default: "user",
-    },
+    password: { type: String, required: true, minlength: 4, select: false },
+    role: { type: String, enum: ["user", "admin"], default: "user" },
   },
-
   { timestamps: true }
 );
+
+// хеш пароля при создании/изменении
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
+
+// удобный метод сравнения пароля
+userSchema.methods.comparePassword = function (candidate) {
+  return bcrypt.compare(candidate, this.password);
+};
 
 module.exports = mongoose.model("User", userSchema);
