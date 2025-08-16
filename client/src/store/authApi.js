@@ -1,4 +1,3 @@
-// store/authApi.js
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const authApi = createApi({
@@ -18,7 +17,10 @@ export const authApi = createApi({
       query: () => ({ url: "/users/logout", method: "POST" }),
       invalidatesTags: ["Me"],
     }),
-    me: b.query({ query: () => "/users/me", providesTags: ["Me"] }),
+    me: b.query({
+      query: () => "/users/me",
+      providesTags: ["Me"],
+    }),
   }),
 });
 

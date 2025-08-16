@@ -1,5 +1,4 @@
 import { useState, useCallback } from "react";
-import { useSelector } from "react-redux";
 import { Routes, Route } from "react-router";
 import { Box, CssBaseline } from "@mui/material";
 import NavTabs from "./components/NavTabs/NavTabs";
@@ -11,12 +10,11 @@ import LoginForm from "@/components/Auth/LoginForm";
 import { useMeQuery, useLogoutMutation } from "@/store/authApi";
 
 export default function App() {
-  useMeQuery();
+  const { data } = useMeQuery(); // гидрация по httpOnly-куке
+  const isLoggedIn = Boolean(data?.user);
+
   const [loginOpen, setLoginOpen] = useState(false);
   const [logout] = useLogoutMutation();
-
-  const user = useSelector((s) => s.auth?.user || null);
-  const isLoggedIn = Boolean(user);
 
   const openLogin = () => setLoginOpen(true);
   const closeLogin = () => setLoginOpen(false);
@@ -43,9 +41,9 @@ export default function App() {
           <NavTabs />
           <Box display="flex" alignItems="center" ml="auto">
             <DropdownButton
+              isLoggedIn={isLoggedIn}
               onLoginClick={openLogin}
               onLogoutClick={onLogout}
-              isLoggedIn={isLoggedIn}
             />
           </Box>
         </Box>
