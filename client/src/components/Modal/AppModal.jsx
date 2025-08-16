@@ -10,6 +10,7 @@ import {
 export default function AppModal({
   open,
   onClose,
+  onExited, // <-- добавили
   title,
   leftActions, // кнопки слева (например, Delete)
   rightActions, // кнопки справа (Cancel/Save)
@@ -23,6 +24,7 @@ export default function AppModal({
       onClose={onClose}
       maxWidth={maxWidth}
       fullWidth={fullWidth}
+      slotProps={{ transition: { onExited } }} // <-- здесь
     >
       {title ? <DialogTitle>{title}</DialogTitle> : null}
       <Divider sx={{ width: "100%" }} />

@@ -1,5 +1,6 @@
 import * as React from "react";
 import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
+import MoodBadIcon from "@mui/icons-material/MoodBad";
 import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
 import {
@@ -19,6 +20,7 @@ export default function DropdownButton({
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const close = () => setAnchorEl(null);
+  const Icon = isLoggedIn ? InsertEmoticonIcon : MoodBadIcon;
 
   return (
     <>
@@ -27,7 +29,7 @@ export default function DropdownButton({
           sx={{ bgcolor: isLoggedIn ? green[500] : grey[500] }}
           variant="rounded"
         >
-          <InsertEmoticonIcon />
+          <Icon />
         </Avatar>
       </IconButton>
 

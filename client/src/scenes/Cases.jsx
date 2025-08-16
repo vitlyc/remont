@@ -55,10 +55,13 @@ export default function Cases() {
     setForm(makeEmptyCase());
     setOpen(true);
   };
-  const handleClose = () => {
-    setOpen(false);
-    setForm(null);
-  };
+  // const handleClose = () => {
+  //   setOpen(false);
+  //   setForm(null);
+  // };
+
+  const handleClose = () => setOpen(false);
+  const handleExited = () => setForm(null);
 
   const getNextId = React.useCallback(() => {
     const maxId = cases.length
@@ -111,6 +114,7 @@ export default function Cases() {
       <AppModal
         open={open}
         onClose={handleClose}
+        onExited={handleExited}
         title={title}
         leftActions={
           !form?.__isNew && (
