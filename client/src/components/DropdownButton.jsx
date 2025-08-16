@@ -1,5 +1,5 @@
 import * as React from "react";
-import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
+import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
 import {
@@ -9,9 +9,13 @@ import {
   ListItemIcon,
   Avatar,
 } from "@mui/material";
-import { grey } from "@mui/material/colors";
+import { grey, green } from "@mui/material/colors";
 
-export default function DropdownButton({ onLoginClick, onLogoutClick }) {
+export default function DropdownButton({
+  isLoggedIn = false,
+  onLoginClick,
+  onLogoutClick,
+}) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const close = () => setAnchorEl(null);
@@ -19,24 +23,30 @@ export default function DropdownButton({ onLoginClick, onLogoutClick }) {
   return (
     <>
       <IconButton onClick={(e) => setAnchorEl(e.currentTarget)} size="small">
-        <Avatar sx={{ bgcolor: grey[500] }} variant="rounded">
-          <SentimentNeutralIcon />
+        <Avatar
+          sx={{ bgcolor: isLoggedIn ? green[500] : grey[500] }}
+          variant="rounded"
+        >
+          <InsertEmoticonIcon />
         </Avatar>
       </IconButton>
 
       <Menu anchorEl={anchorEl} open={open} onClose={close} onClick={close}>
-        <MenuItem onClick={onLoginClick}>
-          <ListItemIcon>
-            <LoginIcon fontSize="small" />
-          </ListItemIcon>
-          Войти
-        </MenuItem>
-        <MenuItem onClick={onLogoutClick}>
-          <ListItemIcon>
-            <LogoutIcon fontSize="small" />
-          </ListItemIcon>
-          Выйти
-        </MenuItem>
+        {!isLoggedIn ? (
+          <MenuItem onClick={onLoginClick}>
+            <ListItemIcon>
+              <LoginIcon fontSize="small" />
+            </ListItemIcon>
+            Войти
+          </MenuItem>
+        ) : (
+          <MenuItem onClick={onLogoutClick}>
+            <ListItemIcon>
+              <LogoutIcon fontSize="small" />
+            </ListItemIcon>
+            Выйти
+          </MenuItem>
+        )}
       </Menu>
     </>
   );
