@@ -7,7 +7,11 @@ import Cases from "./scenes/Cases";
 import Statistics from "./scenes/Statistics";
 import AppModal from "@/components/Modal/AppModal";
 import LoginForm from "@/components/Auth/LoginForm";
-import { useMeQuery, useLogoutMutation } from "@/store/authApi";
+import {
+  useLoginMutation,
+  useMeQuery,
+  useLogoutMutation,
+} from "@/store/authApi";
 
 export default function App() {
   const { data } = useMeQuery(); // гидрация по httpOnly-куке
@@ -18,9 +22,7 @@ export default function App() {
 
   const openLogin = () => setLoginOpen(true);
   const closeLogin = () => setLoginOpen(false);
-  console.log("====================================");
-  console.log(data);
-  console.log("====================================");
+
   const onLogout = useCallback(async () => {
     try {
       await logout().unwrap();

@@ -33,12 +33,14 @@ exports.login = async (req, res, next) => {
     const obj = user.toObject();
     delete obj.password;
     res.json({ user: obj }); // 200
-  } catch (e) {
-    next(e);
+  } catch (err) {
+    next(err);
   }
 };
 
 exports.me = async (req, res, next) => {
+  // const users = await User.find().select("name email role");
+  // console.log(users);
   try {
     const uid = req.cookies?.uid;
     if (!uid) return res.status(401).json({ error: "unauthorized" });

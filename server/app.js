@@ -8,10 +8,13 @@ const cookieParser = require("cookie-parser");
 
 dotenv.config({ quiet: true });
 const corsOptions = {
-  origin: "http://localhost:5173",
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  origin: process.env.CORS_ORIGIN || "*",
+  credentials: process.env.CORS_CREDENTIALS === "true",
+  methods: process.env.CORS_METHODS?.split(",") || ["GET", "POST"],
+  allowedHeaders: process.env.CORS_ALLOWED_HEADERS?.split(",") || [
+    "Content-Type",
+    "Authorization",
+  ],
 };
 
 const app = express();

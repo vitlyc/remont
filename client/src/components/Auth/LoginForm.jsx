@@ -4,7 +4,8 @@ import { useLoginMutation } from "@/store/authApi";
 
 export default function LoginForm({ onClose, onSuccess }) {
   const [form, setForm] = React.useState({ email: "", password: "" });
-  const [login, { isLoading }] = useLoginMutation();
+  const [login, { isLoading, data }] = useLoginMutation();
+  console.log(data);
 
   const set = (k) => (e) => setForm((s) => ({ ...s, [k]: e.target.value }));
 
@@ -21,7 +22,7 @@ export default function LoginForm({ onClose, onSuccess }) {
   return (
     <Stack spacing={2}>
       <Grid container spacing={2}>
-        <Grid item xs={12}>
+        <Grid xs={12}>
           <TextField
             label="Email"
             type="email"
@@ -31,7 +32,7 @@ export default function LoginForm({ onClose, onSuccess }) {
             autoFocus
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid xs={12}>
           <TextField
             label="Пароль"
             type="password"

@@ -105,7 +105,7 @@ export default function Cases() {
 
       <Grid container spacing={2}>
         {cases.map((item) => (
-          <Grid item xs={12} sm={6} md={4} key={item.id}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={item.id}>
             <CaseCard item={item} onClick={handleOpenEdit} />
           </Grid>
         ))}
