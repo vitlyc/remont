@@ -2,6 +2,7 @@
 const User = require("../models/user");
 
 const isProd = process.env.NODE_ENV === "production";
+console.log(isProd);
 
 // ОДИН источник правды для опций куки
 const cookieOpts = {

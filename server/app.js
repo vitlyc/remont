@@ -56,7 +56,7 @@ app.use(morgan("common"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
+app.set("trust proxy", 1);
 // ГЛОБАЛЬНЫЙ CORS ДО роутов — этого достаточно, он обработает и OPTIONS
 app.use(cors(corsOptions));
 
