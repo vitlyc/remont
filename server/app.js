@@ -12,11 +12,12 @@ const app = express();
 
 const allowedOrigin = "https://remont-mu.vercel.app"; // Укажите ваш домен
 
+// Настройка CORS для разрешения кросс-доменных запросов с куки
 app.use(
   cors({
-    origin: allowedOrigin, // Указываем точный источник
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    origin: allowedOrigin, // Указываем точный домен, с которого разрешён доступ
+    methods: ["GET", "POST", "PUT", "DELETE"], // Разрешаем методы
+    allowedHeaders: ["Content-Type", "Authorization"], // Разрешаем заголовки
     credentials: true, // Разрешаем использование cookies и других credentials
   })
 );
