@@ -2,10 +2,11 @@
 const User = require("../models/user");
 
 const cookieOpts = {
-  httpOnly: true,
-  sameSite: "lax",
+  httpOnly: true, // Защищает cookie от доступа через JavaScript
+  sameSite: "None", // Разрешает кросс-доменные запросы с cookies
+  secure: true, // Обязательно для HTTPS
   path: "/",
-  maxAge: 7 * 24 * 60 * 60 * 1000,
+  maxAge: 7 * 24 * 60 * 60 * 1000, // Кука будет действовать 7 дней
 };
 const setUid = (res, id) => res.cookie("uid", id.toString(), cookieOpts);
 
