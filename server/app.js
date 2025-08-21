@@ -10,11 +10,14 @@ dotenv.config({ quiet: true });
 
 const app = express();
 
+const allowedOrigin = "https://remont-mu.vercel.app"; // Укажите ваш домен
+
 app.use(
   cors({
-    origin: "*", // Разрешает все источники
-    methods: ["GET", "POST", "PUT"], // Разрешает указанные методы
-    allowedHeaders: ["Content-Type"], // Разрешает указанные заголовки
+    origin: allowedOrigin, // Указываем точный источник
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true, // Разрешаем использование cookies и других credentials
   })
 );
 app.use(helmet());
