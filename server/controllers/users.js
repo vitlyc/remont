@@ -55,6 +55,6 @@ exports.me = async (req, res, next) => {
 };
 
 exports.logout = (req, res) => {
-  res.clearCookie("uid", { httpOnly: true, sameSite: "lax", path: "/" });
+  res.clearCookie("uid", cookieOpts);
   res.json({ ok: true });
 };
