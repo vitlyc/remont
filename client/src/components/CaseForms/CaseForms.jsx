@@ -1,15 +1,12 @@
-// components/caseForms/CaseForms.jsx
 import * as React from "react";
-import { Box, Divider } from "@mui/material";
+import { Box } from "@mui/material";
 import NavTabs from "@/components/NavTabs/NavTabs";
-
 import ObjectForm from "./ObjectForm";
-// ⬇️ новый общий редактор нескольких ответчиков
 import DefendantsForm from "./DefendantsForm";
 import DebtForm from "./DebtForm";
 import CourtForm from "./CourtForm";
 
-export default function CaseForms({ value, onChange }) {
+export default function CaseForms({ form, onChange }) {
   const [tab, setTab] = React.useState("object");
 
   const tabs = [
@@ -19,30 +16,17 @@ export default function CaseForms({ value, onChange }) {
   ];
 
   return (
-    <Box
-      sx={{
-        minHeight: "45vh",
-      }}
-    >
+    <Box sx={{ minHeight: "45vh" }}>
       <NavTabs mode="static" tabs={tabs} value={tab} onChange={setTab} />
-
       <Box sx={{ mt: 2 }}>
         {tab === "object" && (
           <>
-            <ObjectForm value={value} onChange={onChange} />
-            <DefendantsForm value={value} onChange={onChange} />{" "}
+            <ObjectForm form={form} onChange={onChange} />
+            <DefendantsForm form={form} onChange={onChange} />
           </>
         )}
-        {tab === "debt" && (
-          <>
-            <DebtForm value={value} onChange={onChange} />{" "}
-          </>
-        )}
-        {tab === "court" && (
-          <>
-            <CourtForm value={value} onChange={onChange} />
-          </>
-        )}
+        {tab === "debt" && <DebtForm form={form} onChange={onChange} />}
+        {tab === "court" && <CourtForm form={form} onChange={onChange} />}
       </Box>
     </Box>
   );

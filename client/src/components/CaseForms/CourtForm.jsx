@@ -3,10 +3,8 @@ import * as React from "react";
 import { Box, Autocomplete, TextField, Typography } from "@mui/material";
 import courtsData from "../../../data/kirov_city_magistrate_courts.json";
 
-export default function CourtForm({ value, onChange }) {
-  if (!value) return null;
-
-  const court = value.submission?.court ?? {};
+export default function CourtForm({ form, onChange }) {
+  const court = form.court ?? {};
   const name = court.name ?? "";
   const address = court.address ?? "";
 
@@ -21,13 +19,11 @@ export default function CourtForm({ value, onChange }) {
 
   const updateCourt = React.useCallback(
     (patch) => {
-      const copy = structuredClone(value);
-      copy.submission ??= {};
-      copy.submission.court ??= {};
-      Object.assign(copy.submission.court, patch);
-      onChange?.(copy);
+      const updatedForm = { ...form };
+      updatedForm.court = { ...updatedForm.court, ...patch };
+      onChange?.(updatedForm);
     },
-    [value, onChange]
+    [form, onChange]
   );
 
   const handleNameChange = (_evt, newValue) => {
@@ -48,8 +44,7 @@ export default function CourtForm({ value, onChange }) {
     updateCourt({ address: newValue ?? "" });
   };
 
-  // Один объект для всех дат
-  const [courtDates, setCourtDates] = React.useState({
+  const [dates, setDates] = React.useState({
     dateSentToDebtor: "",
     dateSentToCourt: "",
     dateAcceptedForReview: "",
@@ -57,7 +52,9 @@ export default function CourtForm({ value, onChange }) {
   });
 
   const handleDateChange = (key) => (e) => {
-    setCourtDates((prev) => ({ ...prev, [key]: e?.target?.value ?? "" }));
+    const newDates = { ...dates, [key]: e?.target?.value ?? "" };
+    setDates(newDates);
+    updateCourt(newDates);
   };
 
   return (
@@ -112,7 +109,7 @@ export default function CourtForm({ value, onChange }) {
             size="small"
             label="Направлено должнику"
             type="date"
-            value={courtDates.dateSentToDebtor}
+            value={dates.dateSentToDebtor}
             onChange={handleDateChange("dateSentToDebtor")}
             InputLabelProps={{ shrink: true }}
             sx={{ flex: "0 1 220px" }}
@@ -120,13 +117,13 @@ export default function CourtForm({ value, onChange }) {
         </Box>
 
         {/* Направлено в суд */}
-        {courtDates.dateSentToDebtor && (
+        {dates.dateSentToDebtor && (
           <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
             <TextField
               size="small"
               label="Направлено в суд"
               type="date"
-              value={courtDates.dateSentToCourt}
+              value={dates.dateSentToCourt}
               onChange={handleDateChange("dateSentToCourt")}
               InputLabelProps={{ shrink: true }}
               sx={{ flex: "0 1 220px" }}
@@ -135,13 +132,13 @@ export default function CourtForm({ value, onChange }) {
         )}
 
         {/* Принято к рассмотрению */}
-        {courtDates.dateSentToCourt && (
+        {dates.dateSentToCourt && (
           <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
             <TextField
               size="small"
               label="Принято к рассмотрению"
               type="date"
-              value={courtDates.dateAcceptedForReview}
+              value={dates.dateAcceptedForReview}
               onChange={handleDateChange("dateAcceptedForReview")}
               InputLabelProps={{ shrink: true }}
               sx={{ flex: "0 1 220px" }}
@@ -150,13 +147,13 @@ export default function CourtForm({ value, onChange }) {
         )}
 
         {/* Решение */}
-        {courtDates.dateAcceptedForReview && (
+        {dates.dateAcceptedForReview && (
           <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
             <TextField
               size="small"
               label="Решение"
               type="date"
-              value={courtDates.dateDecisionMade}
+              value={dates.dateDecisionMade}
               onChange={handleDateChange("dateDecisionMade")}
               InputLabelProps={{ shrink: true }}
               sx={{ flex: "0 1 220px" }}

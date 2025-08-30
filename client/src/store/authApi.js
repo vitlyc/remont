@@ -41,8 +41,13 @@ export const authApi = createApi({
         method: "POST",
         body: newCaseData, // Передаем данные нового дела
       }),
-      // можно использовать providesTags или invalidatesTags, в зависимости от вашего кэширования
       invalidatesTags: ["Cases"], // Если нужно сбросить кэш всех дел после создания нового
+    }),
+
+    // Новый запрос для получения всех дел пользователя
+    getUserCases: b.query({
+      query: () => "cases/getUserCases", // Ваш путь к эндпоинту для получения дел
+      providesTags: ["Cases"], // Кэшируем данные дел пользователя
     }),
   }),
 });
@@ -52,4 +57,5 @@ export const {
   useLoginMutation,
   useLogoutMutation,
   useCreateCaseMutation,
+  useGetUserCasesQuery, // Хук для использования запроса в компоненте
 } = authApi;

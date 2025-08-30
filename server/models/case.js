@@ -1,5 +1,4 @@
-// server/models/case.js
-const mongoose = require("mongoose");
+const mongoose = require("mongoose"); // Добавьте это в начало файла
 const User = require("./user");
 
 const caseSchema = new mongoose.Schema(
@@ -18,8 +17,8 @@ const caseSchema = new mongoose.Schema(
         surname: { type: String },
         name: { type: String },
         patronymic: { type: String },
-        birthday: { type: Date }, // Необязательное поле
-        passport: { type: String }, // Необязательное поле
+        birthday: { type: Date },
+        passport: { type: String },
         address: { type: String },
         share: { type: String },
       },
@@ -35,7 +34,6 @@ const caseSchema = new mongoose.Schema(
       },
     },
     court: {
-      type: { type: String, enum: ["magistrate", "district"] }, // Тип суда: magistrate или district
       name: { type: String }, // Название суда
       address: { type: String },
       dateSentToDebtor: { type: Date }, // Дата отправки должнику

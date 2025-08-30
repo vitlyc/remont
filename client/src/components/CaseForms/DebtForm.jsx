@@ -3,12 +3,11 @@ import * as React from "react";
 import { Box, TextField, Typography } from "@mui/material";
 import { calcStateDuty } from "@/utils/calcStateDuty";
 import { useDebouncedCallback } from "@/hooks/useDebouncedCallback";
-import { getLastDayOfPreviousMonth } from "@/utils/getLastDayOfPreviousMonth";
 
-function DebtFormInner({ value, onChange }) {
-  if (!value) return null;
+function DebtFormInner({ form, onChange }) {
+  if (!form) return null;
 
-  const debt = value.debt ?? {};
+  const debt = form.debt ?? {};
   const period = debt.period ?? {};
 
   const [localFrom, setLocalFrom] = React.useState(period.from ?? "");
@@ -21,10 +20,10 @@ function DebtFormInner({ value, onChange }) {
 
   const commitPeriod = useDebouncedCallback((key, val) => {
     const next = {
-      ...value,
+      ...form,
       debt: {
-        ...value.debt,
-        period: { ...(value.debt?.period ?? {}), [key]: val },
+        ...form.debt,
+        period: { ...(form.debt?.period ?? {}), [key]: val },
       },
     };
     onChange?.(next);
@@ -32,7 +31,7 @@ function DebtFormInner({ value, onChange }) {
 
   const setDebtNumber = (key) => (e) => {
     const raw = e?.target?.value ?? "";
-    const next = { ...value, debt: { ...(value.debt ?? {}) } };
+    const next = { ...form, debt: { ...(form.debt ?? {}) } };
 
     next.debt[key] = toNumberOrEmpty(raw);
 

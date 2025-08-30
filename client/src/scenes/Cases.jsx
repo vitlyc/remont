@@ -1,4 +1,3 @@
-// scenes/Cases.jsx
 import * as React from "react";
 import {
   Box,
@@ -13,26 +12,21 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import { useCases } from "@/hooks/useCases";
 import CaseCard from "@/components/CaseCard/CaseCard";
 import AppModal from "@/components/Modal/AppModal";
 import CaseForms from "@/components/CaseForms/CaseForms";
-import { useCreateCaseMutation } from "@/store/authApi"; // Импортируем хук для мутации
+import { useCreateCaseMutation, useGetUserCasesQuery } from "@/store/authApi";
 
 function makeEmptyCase() {
   return {
     __isNew: true,
-    id: undefined,
-
     object: {
-      account: "", // Лицевой счёт
-      objectAddress: "", // Адрес объекта
-      area: "", // Площадь объекта
+      account: "",
+      objectAddress: "",
+      area: "",
     },
-
     defendants: [
       {
-        id: undefined,
         surname: "",
         name: "",
         patronymic: "",
@@ -42,68 +36,50 @@ function makeEmptyCase() {
         share: "",
       },
     ],
-
     debt: {
       principal: "",
       penalty: "",
       total: "",
       duty: "",
-      period: {
-        from: "",
-        to: "",
-      },
+      period: { from: "", to: "" },
     },
     court: {
-      type: "", // Тип суда
-      name: "", // Название суда
+      name: "",
       address: "",
-      // Добавляем новые поля для дат
       dateSentToDebtor: "",
       dateSentToCourt: "",
       dateAcceptedForReview: "",
       dateDecisionMade: "",
     },
-    comments: "", // Комментарии
+    comments: "",
   };
 }
 
 export default function Cases() {
-  const { cases, addCase, updateCase, removeCase } = useCases();
   const [open, setOpen] = React.useState(false);
-  const [form, setForm] = React.useState(null);
+  const [form, setForm] = React.useState({});
   const [confirmOpen, setConfirmOpen] = React.useState(false);
-
-  // Хук для мутации createCase
+  console.log("====================================");
+  console.log("Cases");
+  console.log("====================================");
   const [createCase] = useCreateCaseMutation();
 
-  const handleOpenEdit = (item) => {
-    setForm(item);
-    setOpen(true);
-  };
+  // Получаем все дела пользователя
+  const { data: cases, error, isLoading } = useGetUserCasesQuery();
+
   const handleOpenCreate = () => {
     setForm(makeEmptyCase());
     setOpen(true);
   };
 
   const handleClose = () => setOpen(false);
-  const handleExited = () => setForm(null);
-
-  const getNextId = React.useCallback(() => {
-    const maxId = cases.length
-      ? Math.max(...cases.map((c) => Number(c.id) || 0))
-      : 0;
-    return maxId + 1;
-  }, [cases]);
+  const handleExited = () => setForm({});
 
   const handleSave = async () => {
-    if (!form) return;
     try {
-      // Если это новый случай, отправляем на сервер через createCase
-      if (form.__isNew) {
-        const response = await createCase(form).unwrap(); // Используем мутацию для сохранения
+      if (form.object.account && form.object.objectAddress) {
+        const response = await createCase(form).unwrap();
         console.log("Case created:", response);
-      } else {
-        updateCase(form.id, form);
       }
       handleClose();
     } catch (error) {
@@ -111,30 +87,37 @@ export default function Cases() {
     }
   };
 
+  const handleOpenEdit = (item) => {
+    setForm(item);
+    setOpen(true);
+  };
+
   const askDelete = () => setConfirmOpen(true);
   const cancelDelete = () => setConfirmOpen(false);
   const confirmDelete = () => {
     setConfirmOpen(false);
-    if (form?.id != null) removeCase(form.id);
+    console.log("Deleting case", form?.id);
     handleClose();
   };
 
-  const title = form
-    ? form.__isNew
-      ? "Новое заявление"
-      : `Редактирование заявления`
-    : "";
+  if (isLoading)
+    return <Typography variant="body1">Loading cases...</Typography>;
+  if (error)
+    return <Typography variant="body1">Error loading cases</Typography>;
 
   return (
     <Box sx={{ position: "relative" }}>
       <Typography variant="body2" sx={{ mb: 3, mt: 3 }}>
-        Всего заявлений: {cases.length}
+        Всего заявлений: {cases?.length || 0}
       </Typography>
 
       <Grid container spacing={2}>
-        {cases.map((item) => (
-          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={item.id}>
-            <CaseCard item={item} onClick={handleOpenEdit} />
+        {cases?.map((caseItem) => (
+          <Grid item xs={12} sm={6} md={4} key={caseItem._id}>
+            <CaseCard
+              item={caseItem} // Передаем каждое дело в CaseCard
+              onClick={() => handleOpenEdit(caseItem)} // Редактирование дела
+            />
           </Grid>
         ))}
       </Grid>
@@ -143,14 +126,13 @@ export default function Cases() {
         open={open}
         onClose={handleClose}
         onExited={handleExited}
-        title={title}
+        title={form.__isNew ? "Новое заявление" : "Редактирование заявления"}
         leftActions={
-          !form?.__isNew && (
+          !form.__isNew && (
             <Button
               onClick={askDelete}
               color="error"
               startIcon={<DeleteOutlineIcon />}
-              variant="text"
             >
               Удалить
             </Button>
@@ -169,7 +151,7 @@ export default function Cases() {
         maxWidth="md"
         fullWidth
       >
-        <CaseForms value={form} onChange={setForm} />
+        <CaseForms form={form} onChange={setForm} />
       </AppModal>
 
       <Dialog open={confirmOpen} onClose={cancelDelete}>
