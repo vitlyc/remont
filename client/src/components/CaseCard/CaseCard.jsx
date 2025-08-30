@@ -57,7 +57,7 @@ export default function CaseCard({ item, onClick }) {
               color="text.secondary"
               sx={{ mt: 1 }}
             >
-              Собственники
+              Ответчики
             </Typography>
             <Typography variant="body1">{ownersStr || "—"}</Typography>
           </Stack>

@@ -1,3 +1,4 @@
+// scenes/Cases.jsx
 import * as React from "react";
 import {
   Box,
@@ -13,9 +14,10 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { useCases } from "@/hooks/useCases";
-import CaseCard from "@/components/Card/Card";
+import CaseCard from "@/components/CaseCard/CaseCard";
 import AppModal from "@/components/Modal/AppModal";
-import CaseForm from "@/components/CaseForm/CaseForm";
+// ⬇️ заменили импорт
+import CaseForms from "@/components/CaseForms/CaseForms";
 
 function makeEmptyCase() {
   return {
@@ -55,10 +57,6 @@ export default function Cases() {
     setForm(makeEmptyCase());
     setOpen(true);
   };
-  // const handleClose = () => {
-  //   setOpen(false);
-  //   setForm(null);
-  // };
 
   const handleClose = () => setOpen(false);
   const handleExited = () => setForm(null);
@@ -93,8 +91,8 @@ export default function Cases() {
 
   const title = form
     ? form.__isNew
-      ? "Новое дело"
-      : `Редактирование дела #${form.id}`
+      ? "Новое заявление"
+      : `Редактирование заявления`
     : "";
 
   return (
@@ -141,7 +139,8 @@ export default function Cases() {
         maxWidth="md"
         fullWidth
       >
-        <CaseForm value={form} onChange={setForm} />
+        {/* ⬇️ новая многовкладочная форма */}
+        <CaseForms value={form} onChange={setForm} />
       </AppModal>
 
       <Dialog open={confirmOpen} onClose={cancelDelete}>

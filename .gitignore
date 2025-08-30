@@ -1,4 +1,5 @@
 # Игнорирование папок node_modules для client и server
+node_modules
 /client/node_modules/
 /server/node_modules/
 
