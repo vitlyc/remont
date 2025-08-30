@@ -154,7 +154,7 @@ function DebtFormInner({ value, onChange }) {
           helperText=""
           sx={{
             display: "inline-flex",
-            maxWidth: "150px",
+            maxWidth: "170px",
           }}
         />
       </Box>

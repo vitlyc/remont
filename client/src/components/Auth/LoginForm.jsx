@@ -5,7 +5,6 @@ import { useLoginMutation } from "@/store/authApi";
 export default function LoginForm({ onClose, onSuccess }) {
   const [form, setForm] = React.useState({ email: "", password: "" });
   const [login, { isLoading, data }] = useLoginMutation();
-  console.log(data);
 
   const set = (k) => (e) => setForm((s) => ({ ...s, [k]: e.target.value }));
 

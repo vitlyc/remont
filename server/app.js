@@ -10,7 +10,10 @@ dotenv.config({ quiet: true });
 
 const app = express();
 
-const allowedOrigin = "https://remont-mu.vercel.app"; // Укажите ваш домен
+const allowedOrigin = [
+  "https://remont-mu.vercel.app,http://localhost:5173",
+  "http://localhost:5173",
+]; // Укажите ваш домен
 
 // Настройка CORS для разрешения кросс-доменных запросов с куки
 app.use(
@@ -30,7 +33,7 @@ app.use(morgan("common"));
 
 // routes
 app.use("/api/v1/users", require("./routes/users"));
-
+app.use("/api/v1/cases", require("./routes/cases"));
 app.use((req, res) => res.status(404).json({ error: "Not found" }));
 
 // error handler

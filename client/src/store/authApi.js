@@ -4,21 +4,21 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${import.meta.env.VITE_BASE_URL}/api/v1/users/`, // /api/v1/users или http://localhost:3000/api/v1/users
+    baseUrl: `${import.meta.env.VITE_BASE_URL}/api/v1/`, // /api/v1/users или http://localhost:3000/api/v1/users
     credentials: "include",
     headers: { "Content-Type": "application/json" },
   }),
-  tagTypes: ["Me"],
+  tagTypes: ["Me", "Cases"], // добавили "Cases" для тегов, если нужно кэшировать данные
   endpoints: (b) => ({
     login: b.mutation({
-      query: (body) => ({ url: "login", method: "POST", body }),
+      query: (body) => ({ url: "users/login", method: "POST", body }),
       invalidatesTags: ["Me"],
     }),
 
-    me: b.query({ query: () => "me", providesTags: ["Me"] }),
+    me: b.query({ query: () => "users/me", providesTags: ["Me"] }),
 
     logout: b.mutation({
-      query: () => ({ url: "logout", method: "POST" }),
+      query: () => ({ url: "users/logout", method: "POST" }),
       async onQueryStarted(_, { dispatch, queryFulfilled }) {
         // мгновенно выключаем UI:
         dispatch(
@@ -34,7 +34,22 @@ export const authApi = createApi({
         }
       },
     }),
+
+    createCase: b.mutation({
+      query: (newCaseData) => ({
+        url: "cases/createCase",
+        method: "POST",
+        body: newCaseData, // Передаем данные нового дела
+      }),
+      // можно использовать providesTags или invalidatesTags, в зависимости от вашего кэширования
+      invalidatesTags: ["Cases"], // Если нужно сбросить кэш всех дел после создания нового
+    }),
   }),
 });
 
-export const { useMeQuery, useLoginMutation, useLogoutMutation } = authApi;
+export const {
+  useMeQuery,
+  useLoginMutation,
+  useLogoutMutation,
+  useCreateCaseMutation,
+} = authApi;

@@ -16,19 +16,23 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { useCases } from "@/hooks/useCases";
 import CaseCard from "@/components/CaseCard/CaseCard";
 import AppModal from "@/components/Modal/AppModal";
-// ⬇️ заменили импорт
 import CaseForms from "@/components/CaseForms/CaseForms";
+import { useCreateCaseMutation } from "@/store/authApi"; // Импортируем хук для мутации
 
 function makeEmptyCase() {
   return {
     __isNew: true,
     id: undefined,
-    account: "",
-    objectAddress: "",
-    area: "",
-    owners: [
+
+    object: {
+      account: "", // Лицевой счёт
+      objectAddress: "", // Адрес объекта
+      area: "", // Площадь объекта
+    },
+
+    defendants: [
       {
-        id: 1,
+        id: undefined,
         surname: "",
         name: "",
         patronymic: "",
@@ -38,8 +42,28 @@ function makeEmptyCase() {
         share: "",
       },
     ],
-    submission: { date: "", court: { type: "", name: "", address: "" } },
-    comments: "",
+
+    debt: {
+      principal: "",
+      penalty: "",
+      total: "",
+      duty: "",
+      period: {
+        from: "",
+        to: "",
+      },
+    },
+    court: {
+      type: "", // Тип суда
+      name: "", // Название суда
+      address: "",
+      // Добавляем новые поля для дат
+      dateSentToDebtor: "",
+      dateSentToCourt: "",
+      dateAcceptedForReview: "",
+      dateDecisionMade: "",
+    },
+    comments: "", // Комментарии
   };
 }
 
@@ -48,6 +72,9 @@ export default function Cases() {
   const [open, setOpen] = React.useState(false);
   const [form, setForm] = React.useState(null);
   const [confirmOpen, setConfirmOpen] = React.useState(false);
+
+  // Хук для мутации createCase
+  const [createCase] = useCreateCaseMutation();
 
   const handleOpenEdit = (item) => {
     setForm(item);
@@ -68,17 +95,20 @@ export default function Cases() {
     return maxId + 1;
   }, [cases]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form) return;
-    if (form.__isNew) {
-      const id = getNextId();
-      const toAdd = { ...form, id };
-      delete toAdd.__isNew;
-      addCase(toAdd);
-    } else {
-      updateCase(form.id, form);
+    try {
+      // Если это новый случай, отправляем на сервер через createCase
+      if (form.__isNew) {
+        const response = await createCase(form).unwrap(); // Используем мутацию для сохранения
+        console.log("Case created:", response);
+      } else {
+        updateCase(form.id, form);
+      }
+      handleClose();
+    } catch (error) {
+      console.error("Error saving case:", error);
     }
-    handleClose();
   };
 
   const askDelete = () => setConfirmOpen(true);
@@ -139,7 +169,6 @@ export default function Cases() {
         maxWidth="md"
         fullWidth
       >
-        {/* ⬇️ новая многовкладочная форма */}
         <CaseForms value={form} onChange={setForm} />
       </AppModal>
 

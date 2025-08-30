@@ -195,7 +195,7 @@ export default function DefendantsForm({ value, onChange }) {
         return (
           <Box
             key={i}
-            sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+            sx={{ display: "flex", flexDirection: "column", gap: 2 }}
           >
             {/* ФИО */}
             <Box sx={row}>
@@ -233,20 +233,23 @@ export default function DefendantsForm({ value, onChange }) {
             </Box>
 
             {/* Доля + Адрес */}
-            <Box sx={row}>
+            <Box sx={{ display: "flex", gap: 2, mt: 0 }}>
               <TextField
                 size="small"
                 label="Доля"
                 value={person.share ?? ""}
                 onChange={setField(i, "share")}
-                sx={{ flex: "0 1 140px" }}
+                sx={{
+                  display: "inline-flex",
+                  maxWidth: "150px",
+                }}
               />
               <TextField
                 size="small"
                 label="Адрес владельца"
                 value={person.address ?? ""}
                 onChange={setField(i, "address")}
-                sx={{ flex: "3 1 360px" }}
+                fullWidth
               />
             </Box>
 

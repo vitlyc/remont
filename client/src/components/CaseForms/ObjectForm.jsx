@@ -9,6 +9,7 @@ export default function ObjectForm({ value, onChange }) {
     const v = e?.target?.value ?? "";
     onChange?.({ ...value, [key]: v });
   };
+  console.log(value);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
@@ -22,6 +23,10 @@ export default function ObjectForm({ value, onChange }) {
           onChange={onField("account")}
           fullWidth
           size="small"
+          sx={{
+            display: "inline-flex",
+            maxWidth: "150px",
+          }}
         />
 
         <TextField
@@ -31,6 +36,10 @@ export default function ObjectForm({ value, onChange }) {
           onChange={onField("area")}
           fullWidth
           size="small"
+          sx={{
+            display: "inline-flex",
+            maxWidth: "150px",
+          }}
         />
 
         <TextField
