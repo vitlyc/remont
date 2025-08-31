@@ -14,12 +14,10 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 function formatDefendants(defendants = []) {
   return defendants
-    .map((defendant) => {
-      const s = defendant?.surname?.trim() ?? "";
-      const n = defendant?.name ? `${defendant.name.trim()[0]}.` : "";
-      const p = defendant?.patronymic
-        ? `${defendant.patronymic.trim()[0]}.`
-        : "";
+    .map((d) => {
+      const s = d?.surname?.trim() ?? "";
+      const n = d?.name ? `${d.name.trim()[0]}.` : "";
+      const p = d?.patronymic ? `${d.patronymic.trim()[0]}.` : "";
       return [s, [n, p].filter(Boolean).join("")].filter(Boolean).join(" ");
     })
     .filter(Boolean)
@@ -27,14 +25,14 @@ function formatDefendants(defendants = []) {
 }
 
 export default function CaseCard({ item, onClick, onCreateRequest }) {
-  const defandantsStr = formatDefendants(item?.defendants);
-  const claimPrice = item?.debt?.total ?? 0;
+  const defendantStr = formatDefendants(item?.defendants);
+  const claimPrice = Number(item?.debt?.total ?? 0);
 
   const [menuAnchor, setMenuAnchor] = React.useState(null);
   const openMenu = Boolean(menuAnchor);
 
   const handleMenuOpen = (e) => {
-    e.stopPropagation(); // не кликать CardActionArea
+    e.stopPropagation();
     setMenuAnchor(e.currentTarget);
   };
   const handleMenuClose = (e) => {
@@ -44,7 +42,7 @@ export default function CaseCard({ item, onClick, onCreateRequest }) {
   const handleCreate = (e) => {
     e.stopPropagation();
     handleMenuClose();
-    onCreateRequest?.(item);
+    onCreateRequest(item._id);
   };
 
   return (
@@ -71,7 +69,7 @@ export default function CaseCard({ item, onClick, onCreateRequest }) {
                 Цена иска
               </Typography>
               <Typography variant="body1">
-                {Number(claimPrice).toLocaleString("ru-RU")} ₽
+                {claimPrice.toLocaleString("ru-RU")} ₽
               </Typography>
             </Stack>
 
@@ -93,14 +91,14 @@ export default function CaseCard({ item, onClick, onCreateRequest }) {
             >
               Ответчики
             </Typography>
-            <Typography variant="body1">{defandantsStr || "—"}</Typography>
+            <Typography variant="body1">{defendantStr || "—"}</Typography>
           </Stack>
         </CardContent>
       </CardActionArea>
 
       {/* Кнопка меню в правом нижнем углу */}
       <IconButton
-        aria-label="доп. действия"
+        aria-label="Доп. действия"
         onClick={handleMenuOpen}
         sx={{ position: "absolute", right: 8, bottom: 8 }}
       >
@@ -111,10 +109,9 @@ export default function CaseCard({ item, onClick, onCreateRequest }) {
         anchorEl={menuAnchor}
         open={openMenu}
         onClose={handleMenuClose}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        transformOrigin={{ vertical: "bottom", horizontal: "right" }}
-        // чтобы клики в меню не пробивали на CardActionArea
         onClick={(e) => e.stopPropagation()}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        transformOrigin={{ vertical: "bottom", horizontal: "right" }}
       >
         <MenuItem onClick={handleCreate}>Создать заявление</MenuItem>
       </Menu>

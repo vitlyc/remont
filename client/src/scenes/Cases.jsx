@@ -15,7 +15,11 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CaseCard from "@/components/CaseCard/CaseCard";
 import AppModal from "@/components/Modal/AppModal";
 import CaseForms from "@/components/CaseForms/CaseForms";
-import { useCreateCaseMutation, useGetUserCasesQuery } from "@/store/authApi";
+import {
+  useCreateCaseMutation,
+  useGetUserCasesQuery,
+  useCreateDocumentMutation,
+} from "@/store/authApi";
 
 function makeEmptyCase() {
   return {
@@ -63,6 +67,16 @@ export default function Cases() {
   //Mutations
   const [createCase] = useCreateCaseMutation();
   const { data: cases, error, isLoading } = useGetUserCasesQuery();
+  const [createDocument, { isLoading: creatingDoc }] =
+    useCreateDocumentMutation();
+
+  const handleCreateRequest = async (caseId) => {
+    try {
+      await createDocument({ caseId }).unwrap();
+    } catch (err) {
+      console.error("createDocument error:", err);
+    }
+  };
 
   const handleOpenCreate = () => {
     setForm(makeEmptyCase());
@@ -112,8 +126,9 @@ export default function Cases() {
         {cases?.map((caseItem) => (
           <Grid item xs={12} sm={6} md={4} key={caseItem._id}>
             <CaseCard
-              item={caseItem} // Передаем каждое дело в CaseCard
-              onClick={() => handleOpenEdit(caseItem)} // Редактирование дела
+              item={caseItem}
+              onClick={() => handleOpenEdit(caseItem)}
+              onCreateRequest={handleCreateRequest}
             />
           </Grid>
         ))}

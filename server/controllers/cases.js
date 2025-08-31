@@ -6,9 +6,7 @@ const User = require("../models/user");
 const createCase = async (req, res, next) => {
   try {
     const userId = req.cookies?.uid;
-
     const user = await User.findById(userId);
-
     const caseData = req.body;
 
     const newCase = await Case.create({
@@ -23,9 +21,7 @@ const createCase = async (req, res, next) => {
 const getUserCases = async (req, res, next) => {
   try {
     const userId = req.cookies?.uid;
-
     const user = await User.findById(userId);
-
     const cases = await Case.find({ user: user._id });
 
     res.status(200).json(cases);

@@ -34,7 +34,6 @@ export const authApi = createApi({
         }
       },
     }),
-
     createCase: b.mutation({
       query: (newCaseData) => ({
         url: "cases/createCase",
@@ -49,6 +48,13 @@ export const authApi = createApi({
       query: () => "cases/getUserCases", // Ваш путь к эндпоинту для получения дел
       providesTags: ["Cases"], // Кэшируем данные дел пользователя
     }),
+    createDocument: b.mutation({
+      query: (payload) => ({
+        url: "documents/createDocument",
+        method: "POST",
+        body: payload,
+      }),
+    }),
   }),
 });
 
@@ -57,5 +63,6 @@ export const {
   useLoginMutation,
   useLogoutMutation,
   useCreateCaseMutation,
-  useGetUserCasesQuery, // Хук для использования запроса в компоненте
+  useGetUserCasesQuery,
+  useCreateDocumentMutation,
 } = authApi;
