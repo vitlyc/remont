@@ -35,10 +35,10 @@ app.use(morgan("common"));
 
 /* =====================  R O U T E S  ===================== */
 
+app.use(require("./routes/dev"));
 app.use("/", require("./routes/google"));
 app.use("/api/v1/users", require("./routes/users"));
 app.use("/api/v1/cases", require("./routes/cases"));
-
 // 404
 app.use((req, res) => res.status(404).json({ error: "Not found" }));
 

@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "intense-digit-470618-c9",
+  "private_key_id": "06df13debfc94d368d29afca50b81ee1871100db",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDF3CTKwPhv2xK9\nl8nsbKy1QHdQxFKud24AcCwjlG+QaW9OYceaoMhea6xX/eJn3qcr3vJIaaCzDHrZ\nAJAhGMU340fohhU80/2VgISwykKUOTEcrXUOlAnbSHshKuw0jpXSq/DyTv/7toz8\njWU/3BRat7kbyQS+8w0gIjHOd2wcdaWegqpdnn5YtdAGAnSaPkFZ2NHfM1597e6C\nlJw0YzhJSZf7AzMzQqgANIUtRU+TACV35Pv7k3lX4MNTa/WGHAOJLG54H5jHbiVb\n1v/k1WdS/JZA6qjtB+EnBqhV+Nb08fPRrdV2dXLMTNjZwg59DuLAClGl/umAMYNt\nb2Pm2h97AgMBAAECggEADB64mDzq2vs58iguo89iYvXweR+Viv9g2yED6ygID3oN\n6ei+b9/idjo1Q+yW5lLyvZK6F6p0wBMHIWzR510bk5lWCc3Q1jmMIpDNUAELxAWe\n1wlfDsYNtoOBm14EOxHy5oVGzKj/MD2V9FB6/8bs7kOr0KJnKoU77Bh8IZAaLMIC\nbvgXQXtgemdmCJczsfKExMH9C5TtlBDn3DwgWjhquHANYOBhVNY/xvkIBwwLLJE1\nN2M5egYyV12sxSTnhoEgUbsy+tsOb2Ote8ImecrKc/6xN5IjLskjZXZ/N4b1sWSi\nMIFw81I4Yv2h07ivENFvzjO/BAMIJxdt9UpAj30gcQKBgQD4SV7ldtSZ4Ahjng4O\n7Fd3HVA7BjI+utOKJGq/2XLl8thpamyyt0QQUY4irLNQV4KvDO+p58XoOSQDptLz\nmgSKIW3vQWOJV1VQyG6K8zAD/OOu5Rn9rkJQ5/Ml4b2Err5iLZ/cJZIE3T7ss57R\nxVyRDETzJfp/gqC3mIKKjgxqqwKBgQDMAbqBHFBqVg8Ouvd4xL+/65AH58TBtBYn\n+EMDEpuTnUWbjN9wsA5+3KvebpU8MDXlVm2xZVovjLzNx1ZsChXT1qs5q57eFZHn\nU/MTSR6xTrDZ806o9FVBQyHgxEAXCtf92QGbBFra7uTNnPA0LCNnweR5dTSUtS7H\nxLbo/J0ecQKBgHUtm33McVYV55+sLpJYdIcg7IaOzBPS9JdTzJWyuIlR7VUDBz3p\nRFQ3SU+QFiiqxGB9SHb1je+lWBvpFdImNFJEqK+sOp/M+dTgY1tsnpKjPYmDUprp\nLR8l+Rk9ysXd+rg3NCUgDiQBjvsDYsc50BAcrEXc/LZFHjjH34Qoui91AoGADFLi\naGBEf1f5iuNChdok1zwstD2NBkKRwBJgQfRCz7UFenMVIGKSTZmZDFPT0hH7f4Is\nGDZOL2cqFKhBET++t9BVAaPbcgENklLg8T5Oi1l8l336N3yjFdEvX7ubP4kZKS2N\nykaGEomx6rXbUNuFvAPbgHbTGVSkoc7BWevAthECgYAxUIS+CBLMI9o+FoH/xZd8\nksWQe99012tKSYNfEI4KvlaEEXgwvnV6FNh4jUkImLiVpNgGJrGJmDQBffZ+fzfj\nsiS0ERmcnNe/XqkAIYFTDsBRtBTcl+02ibLM4qswktEQxRNThK2MmNbXxotvmwPG\nqiBV46Fs0J1TPzchxC/yxg==\n-----END PRIVATE KEY-----\n",
+  "client_email": "remont-app@intense-digit-470618-c9.iam.gserviceaccount.com",
+  "client_id": "104075985251313987614",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/remont-app%40intense-digit-470618-c9.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
