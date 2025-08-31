@@ -13,10 +13,7 @@ dotenv.config();
 const app = express();
 
 /* =====================  C O R S  ===================== */
-const allowedOrigin = [
-  "https://remont-mu.vercel.app",
-  "http://http://localhost:5173",
-];
+const allowedOrigin = ["https://remont-mu.vercel.app", "http://localhost:5173"];
 
 // Настройка CORS для разрешения кросс-доменных запросов с куки
 app.use(
@@ -37,22 +34,10 @@ app.use(cookieParser());
 app.use(morgan("common"));
 
 /* =====================  R O U T E S  ===================== */
-const usersRouter = require("./routes/users");
-const casesRouter = require("./routes/cases");
 
-// OAuth роутеры (экспортируются как объект)
-const {
-  apiRouter: googleApiRouter,
-  rootRouter: googleRootRouter,
-} = require("./routes/googleOauth");
-
-// Колбэк должен совпадать с редиректом в Google Console: /auth/google/callback
-app.use("/", googleRootRouter);
-
-// Остальные API
-app.use("/api/v1", googleApiRouter); // /api/v1/auth/google
-app.use("/api/v1/users", usersRouter);
-app.use("/api/v1/cases", casesRouter);
+app.use("/", require("./routes/google"));
+app.use("/api/v1/users", require("./routes/users"));
+app.use("/api/v1/cases", require("./routes/cases"));
 
 // 404
 app.use((req, res) => res.status(404).json({ error: "Not found" }));
