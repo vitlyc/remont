@@ -20,8 +20,8 @@ const getDef = (arr = [], i = 0, key) => {
 };
 
 async function createCaseDocs(caseDoc = {}) {
-  const templateId = (process.env.GOOGLE_TEMPLATE_DOC_ID || "").trim();
-  const folderId = (process.env.GOOGLE_DRIVE_FOLDER_ID || "").trim();
+  const templateId = process.env.GOOGLE_TEMPLATE_DOC_ID;
+  const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
   if (!templateId) throw new Error("GOOGLE_TEMPLATE_DOC_ID is not set");
   if (!folderId) throw new Error("GOOGLE_DRIVE_FOLDER_ID is not set");
 
