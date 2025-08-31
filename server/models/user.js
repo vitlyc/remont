@@ -21,7 +21,12 @@ const userSchema = new mongoose.Schema(
     },
     password: { type: String, required: true, minlength: 4, select: false },
     role: { type: String, enum: ["user", "admin"], default: "user" },
+    google: {
+      tokens: { type: mongoose.Schema.Types.Mixed, default: null }, // access_token/refresh_token и т.п.
+      connectedAt: { type: Date },
+    },
   },
+
   { timestamps: true }
 );
 

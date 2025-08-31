@@ -16,7 +16,7 @@ export default function CaseForms({ form, onChange }) {
   ];
 
   return (
-    <Box sx={{ minHeight: "45vh" }}>
+    <Box sx={{ minHeight: "55vh" }}>
       <NavTabs mode="static" tabs={tabs} value={tab} onChange={setTab} />
       <Box sx={{ mt: 2 }}>
         {tab === "object" && (

@@ -27,7 +27,7 @@ function DebtFormInner({ form, onChange }) {
       },
     };
     onChange?.(next);
-  }, 200);
+  }, 300);
 
   const setDebtNumber = (key) => (e) => {
     const raw = e?.target?.value ?? "";

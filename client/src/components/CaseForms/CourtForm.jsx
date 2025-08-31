@@ -1,6 +1,7 @@
 // components/caseForms/CourtForm.jsx
 import * as React from "react";
 import { Box, Autocomplete, TextField, Typography } from "@mui/material";
+import { useDebouncedCallback } from "@/hooks/useDebouncedCallback";
 import courtsData from "../../../data/kirov_city_magistrate_courts.json";
 
 export default function CourtForm({ form, onChange }) {
@@ -44,6 +45,7 @@ export default function CourtForm({ form, onChange }) {
     updateCourt({ address: newValue ?? "" });
   };
 
+  // ЛОКАЛЬНЫЕ ДАТЫ — как было (определяют, что показывать дальше)
   const [dates, setDates] = React.useState({
     dateSentToDebtor: "",
     dateSentToCourt: "",
@@ -51,10 +53,16 @@ export default function CourtForm({ form, onChange }) {
     dateDecisionMade: "",
   });
 
+  // 🔹 ТОЛЬКО добавляем debounce-коммит (аналогично DebtForm)
+  const commitDate = useDebouncedCallback((key, val) => {
+    updateCourt({ [key]: val });
+  }, 200);
+
   const handleDateChange = (key) => (e) => {
-    const newDates = { ...dates, [key]: e?.target?.value ?? "" };
-    setDates(newDates);
-    updateCourt(newDates);
+    const v = e?.target?.value ?? "";
+    const newDates = { ...dates, [key]: v };
+    setDates(newDates); // локально — сразу, чтобы условия показа работали как раньше
+    React.startTransition(() => commitDate(key, v)); // в form — с задержкой
   };
 
   return (
@@ -101,7 +109,7 @@ export default function CourtForm({ form, onChange }) {
         />
       </Box>
 
-      {/* Даты с отображением по порядку */}
+      {/* Даты с отображением по порядку — ЛОГИКА КАК БЫЛО */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
         {/* Направлено должнику */}
         <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
@@ -116,7 +124,7 @@ export default function CourtForm({ form, onChange }) {
           />
         </Box>
 
-        {/* Направлено в суд */}
+        {/* Направлено в суд (только если заполнено предыдущее) */}
         {dates.dateSentToDebtor && (
           <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
             <TextField

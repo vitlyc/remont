@@ -28,7 +28,7 @@ export default function AppModal({
     >
       {title ? <DialogTitle>{title}</DialogTitle> : null}
       <Divider sx={{ width: "100%" }} />
-      <DialogContent>{children}</DialogContent>
+      <DialogContent sx={{ pt: 1 }}>{children}</DialogContent>
       {(leftActions || rightActions) && (
         <DialogActions sx={{ gap: 1, px: 3, pb: 2 }}>
           {leftActions ? <Box sx={{ mr: "auto" }}>{leftActions}</Box> : null}

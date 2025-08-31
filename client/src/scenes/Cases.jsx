@@ -59,12 +59,9 @@ export default function Cases() {
   const [open, setOpen] = React.useState(false);
   const [form, setForm] = React.useState({});
   const [confirmOpen, setConfirmOpen] = React.useState(false);
-  console.log("====================================");
-  console.log("Cases");
-  console.log("====================================");
-  const [createCase] = useCreateCaseMutation();
 
-  // Получаем все дела пользователя
+  //Mutations
+  const [createCase] = useCreateCaseMutation();
   const { data: cases, error, isLoading } = useGetUserCasesQuery();
 
   const handleOpenCreate = () => {
@@ -77,7 +74,7 @@ export default function Cases() {
 
   const handleSave = async () => {
     try {
-      if (form.object.account && form.object.objectAddress) {
+      if (form?.__isNew) {
         const response = await createCase(form).unwrap();
         console.log("Case created:", response);
       }

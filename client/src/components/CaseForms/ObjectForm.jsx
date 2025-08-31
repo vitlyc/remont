@@ -16,7 +16,7 @@ export default function ObjectForm({ form, onChange }) {
       <Box sx={{ display: "flex", gap: 2, mt: 0 }}>
         <TextField
           label="Лицевой счёт"
-          value={form.object.account}
+          value={form.object?.account}
           onChange={onField("account")}
           fullWidth
           size="small"
@@ -25,7 +25,7 @@ export default function ObjectForm({ form, onChange }) {
         <TextField
           label="Площадь"
           type="number"
-          value={form.object.area}
+          value={form.object?.area}
           onChange={onField("area")}
           fullWidth
           size="small"
@@ -33,7 +33,7 @@ export default function ObjectForm({ form, onChange }) {
         />
         <TextField
           label="Адрес объекта"
-          value={form.object.objectAddress}
+          value={form.object?.objectAddress}
           onChange={onField("objectAddress")}
           fullWidth
           size="small"
