@@ -7,10 +7,6 @@ exports.createDocument = async (req, res, next) => {
     if (!caseId) return res.status(400).json({ error: "caseId is required" });
     console.log(caseId);
 
-    const userId = req.cookies?.uid;
-    if (!userId)
-      return res.status(401).json({ error: "User not authenticated" });
-
     const caseDoc = await Case.findById(caseId).lean();
     if (!caseDoc) {
       return res.status(404).json({ error: "Case not found" });

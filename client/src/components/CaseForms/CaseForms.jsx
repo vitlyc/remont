@@ -13,6 +13,8 @@ export default function CaseForms({ form, onChange }) {
     { value: "object", label: "Сведения" },
     { value: "debt", label: "Задолженность" },
     { value: "court", label: "Судебный приказ" },
+    { value: "execution", label: "ИП" },
+    { value: "documents", label: "Документы" },
   ];
 
   return (

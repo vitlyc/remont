@@ -1,4 +1,3 @@
-// services/caseDocService.js
 const { getDrive, getDocs } = require("./googleOAuth");
 const dotenv = require("dotenv");
 dotenv.config();
@@ -31,11 +30,11 @@ async function createCaseDocs(caseDoc = {}) {
   const docs = getDocs();
 
   // 1) копируем шаблон в целевую папку
-  const title = `Судебный приказ ${caseDoc?.object?.account}`;
+  const fileName = `Судебный приказ ${caseDoc?.object?.account}`;
 
   const { data: copy } = await drive.files.copy({
     fileId: templateId,
-    requestBody: { name: title, parents: [folderId] },
+    requestBody: { name: fileName, parents: [folderId] },
     fields: "id, name, webViewLink",
     supportsAllDrives: true,
   });
@@ -69,7 +68,7 @@ async function createCaseDocs(caseDoc = {}) {
     "debt.principal": fmtNum(c.debt?.principal),
     "debt.penalty": fmtNum(c.debt?.penalty),
 
-    // Период (исправленный ключ to)
+    // Период
     "debt.period.from": fmtDate(c.debt?.period?.from),
     "debt.period.to": fmtDate(c.debt?.period?.to),
   };

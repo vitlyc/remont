@@ -22,7 +22,9 @@ const getUserCases = async (req, res, next) => {
   try {
     const userId = req.cookies?.uid;
     const user = await User.findById(userId);
+
     const cases = await Case.find({ user: user._id });
+    console.log('cases');
 
     res.status(200).json(cases);
   } catch (error) {
