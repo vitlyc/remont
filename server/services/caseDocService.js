@@ -1,7 +1,5 @@
 // services/caseDocService.js
 const { getDrive, getDocs } = require("./googleOAuth");
-const dotenv = require("dotenv");
-dotenv.config();
 
 // Форматтеры
 const fmtDate = (v) => {
@@ -21,6 +19,35 @@ const getDef = (arr = [], i = 0, key) => {
   return d[key] ?? "";
 };
 
+async function findOrCreateFolder(folderName) {
+  const drive = getDrive();
+
+  // Попытка найти папку с нужным именем
+  const response = await drive.files.list({
+    q: `name = '${folderName}' and mimeType = 'application/vnd.google-apps.folder'`,
+    fields: "files(id, name)",
+    supportsAllDrives: true,
+  });
+
+  const existingFolder = response.data.files.find((file) => file.name === folderName);
+
+  if (existingFolder) {
+    return existingFolder.id; // Если папка существует, возвращаем её ID
+  }
+
+  // Если папка не найдена, создаем новую
+  const { data: newFolder } = await drive.files.create({
+    requestBody: {
+      name: folderName,
+      mimeType: "application/vnd.google-apps.folder",
+    },
+    fields: "id",
+    supportsAllDrives: true,
+  });
+
+  return newFolder.id; // Возвращаем ID новой папки
+}
+
 async function createCaseDocs(caseDoc = {}) {
   const templateId = process.env.GOOGLE_TEMPLATE_DOC_ID;
   const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
@@ -30,18 +57,25 @@ async function createCaseDocs(caseDoc = {}) {
   const drive = getDrive();
   const docs = getDocs();
 
-  // 1) копируем шаблон в целевую папку
+  // 1) Получаем данные о фамилии, имени и отчестве ответчика
+  const defendantName = `${getDef(caseDoc.defendants, 0, "surname")} ${getDef(caseDoc.defendants, 0, "name")} ${getDef(caseDoc.defendants, 0, "patronymic")}`;
+
+  // 2) Проверяем наличие папки с таким названием (по фамилии, имени и отчеству ответчика)
+  const folderName = `Судебный приказ - ${defendantName}`;
+  const targetFolderId = await findOrCreateFolder(folderName);
+
   const title = `Судебный приказ ${caseDoc?.object?.account}`;
 
+  // 3) Копируем шаблон в найденную или созданную папку
   const { data: copy } = await drive.files.copy({
     fileId: templateId,
-    requestBody: { name: title, parents: [folderId] },
+    requestBody: { name: title, parents: [targetFolderId] },
     fields: "id, name, webViewLink",
     supportsAllDrives: true,
   });
   const documentId = copy.id;
 
-  // 2) точная карта замен — РОВНО как в шаблоне
+  // 4) Точная карта замен — РОВНО как в шаблоне
   const c = caseDoc;
 
   const replaceMap = {
@@ -49,12 +83,12 @@ async function createCaseDocs(caseDoc = {}) {
     "court.name": c.court?.name ?? "",
     "court.address": c.court?.address ?? "",
 
-    // Объект (используй в шаблоне именно такие ключи)
+    // Объект
     "object.account": c.object?.account ?? "",
     "object.area": c.object?.area ?? "",
-    "object.address": c.object?.address ?? "", // <-- если в БД поле objectAddress, поменяй шаблон на object.objectAddress ИЛИ БД на address
+    "object.address": c.object?.address ?? "",
 
-    // Ответчик №0 (строго defendant, как в шаблоне)
+    // Ответчик
     "defendant[0].surname": getDef(c.defendants, 0, "surname"),
     "defendant[0].name": getDef(c.defendants, 0, "name"),
     "defendant[0].patronymic": getDef(c.defendants, 0, "patronymic"),
@@ -69,12 +103,12 @@ async function createCaseDocs(caseDoc = {}) {
     "debt.principal": fmtNum(c.debt?.principal),
     "debt.penalty": fmtNum(c.debt?.penalty),
 
-    // Период (исправленный ключ to)
+    // Период
     "debt.period.from": fmtDate(c.debt?.period?.from),
     "debt.period.to": fmtDate(c.debt?.period?.to),
   };
 
-  // 3) replaceAllText для каждого {{ключа}}
+  // 5) Заменяем текст в документе
   const requests = Object.entries(replaceMap).map(([key, val]) => ({
     replaceAllText: {
       containsText: { text: `{{${key}}}`, matchCase: false },
