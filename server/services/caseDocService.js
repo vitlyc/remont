@@ -1,4 +1,3 @@
-// services/caseDocService.js
 const { getDrive, getDocs } = require("./googleOAuth");
 
 // Форматтеры
@@ -19,12 +18,12 @@ const getDef = (arr = [], i = 0, key) => {
   return d[key] ?? "";
 };
 
-async function findOrCreateFolder(folderName) {
+async function findOrCreateFolder(folderName, parentFolderId) {
   const drive = getDrive();
 
-  // Попытка найти папку с нужным именем
+  // Попытка найти папку с нужным именем в указанной родительской папке
   const response = await drive.files.list({
-    q: `name = '${folderName}' and mimeType = 'application/vnd.google-apps.folder'`,
+    q: `'${parentFolderId}' in parents and name = '${folderName}' and mimeType = 'application/vnd.google-apps.folder'`,
     fields: "files(id, name)",
     supportsAllDrives: true,
   });
@@ -35,11 +34,12 @@ async function findOrCreateFolder(folderName) {
     return existingFolder.id; // Если папка существует, возвращаем её ID
   }
 
-  // Если папка не найдена, создаем новую
+  // Если папка не найдена, создаем новую в указанной родительской папке
   const { data: newFolder } = await drive.files.create({
     requestBody: {
       name: folderName,
       mimeType: "application/vnd.google-apps.folder",
+      parents: [parentFolderId], // Родительская папка
     },
     fields: "id",
     supportsAllDrives: true,
@@ -50,9 +50,9 @@ async function findOrCreateFolder(folderName) {
 
 async function createCaseDocs(caseDoc = {}) {
   const templateId = process.env.GOOGLE_TEMPLATE_DOC_ID;
-  const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
+  const parentFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID; // ID родительской папки
   if (!templateId) throw new Error("GOOGLE_TEMPLATE_DOC_ID is not set");
-  if (!folderId) throw new Error("GOOGLE_DRIVE_FOLDER_ID is not set");
+  if (!parentFolderId) throw new Error("GOOGLE_DRIVE_FOLDER_ID is not set");
 
   const drive = getDrive();
   const docs = getDocs();
@@ -60,9 +60,9 @@ async function createCaseDocs(caseDoc = {}) {
   // 1) Получаем данные о фамилии, имени и отчестве ответчика
   const defendantName = `${getDef(caseDoc.defendants, 0, "surname")} ${getDef(caseDoc.defendants, 0, "name")} ${getDef(caseDoc.defendants, 0, "patronymic")}`;
 
-  // 2) Проверяем наличие папки с таким названием (по фамилии, имени и отчеству ответчика)
+  // 2) Проверяем наличие папки с таким названием в родительской папке
   const folderName = `Судебный приказ - ${defendantName}`;
-  const targetFolderId = await findOrCreateFolder(folderName);
+  const targetFolderId = await findOrCreateFolder(folderName, parentFolderId);
 
   const title = `Судебный приказ ${caseDoc?.object?.account}`;
 
