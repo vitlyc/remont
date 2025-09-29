@@ -1,6 +1,4 @@
 const { getDrive, getDocs } = require("./googleOAuth");
-const dotenv = require("dotenv");
-dotenv.config();
 
 // Форматтеры
 const fmtDate = (v) => {
