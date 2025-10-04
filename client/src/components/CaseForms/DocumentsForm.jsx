@@ -12,7 +12,7 @@ export default function DocumentsForm({ form, onChange }) {
         rel="noopener noreferrer"
         sx={{ textDecoration: "none", color: "inherit" }} // Убираем подчеркивание и устанавливаем цвет как у обычного текста
       >
-        <Typography>
+        <Typography variant="body1">
           {form?.defendants[0].surname} {form?.defendants[0].name}{" "}
           {form?.defendants[0].patronymic}
         </Typography>
