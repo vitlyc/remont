@@ -3,8 +3,15 @@ import { Box, Typography, Link } from "@mui/material"
 import FolderIcon from "@mui/icons-material/Folder"
 
 export default function DocumentsForm({ form, onChange }) {
+<<<<<<< HEAD
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: 1 }} pl={1.6}>
+=======
+  console.log(form)
+
+  return (
+    <Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: 1 }}>
+>>>>>>> da3b01382fce6f7f499f9e326e4deea0674fc29f
       <FolderIcon />
       <Link
         href={form?.documents}
@@ -12,7 +19,11 @@ export default function DocumentsForm({ form, onChange }) {
         rel="noopener noreferrer"
         sx={{ textDecoration: "none", color: "inherit" }} // Убираем подчеркивание и устанавливаем цвет как у обычного текста
       >
+<<<<<<< HEAD
         <Typography>
+=======
+        <Typography variant="body1">
+>>>>>>> da3b01382fce6f7f499f9e326e4deea0674fc29f
           {form?.defendants[0].surname} {form?.defendants[0].name}{" "}
           {form?.defendants[0].patronymic}
         </Typography>
