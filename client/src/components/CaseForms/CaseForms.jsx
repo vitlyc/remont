@@ -5,6 +5,7 @@ import ObjectForm from "./ObjectForm"
 import DefendantsForm from "./DefendantsForm"
 import DebtForm from "./DebtForm"
 import CourtForm from "./CourtForm"
+import DocumentsForm from "./DocumentsForm"
 
 export default function CaseForms({ form, onChange }) {
   const [tab, setTab] = React.useState("object")
@@ -39,10 +40,8 @@ export default function CaseForms({ form, onChange }) {
         {tab === "debt" && <DebtForm form={form} onChange={onChange} />}
         {tab === "court" && <CourtForm form={form} onChange={onChange} />}
 
-        {tab === "documents" && form.documents && (
-          <a href={form.documents} target="_blank" rel="noopener noreferrer">
-            Открыть документы
-          </a>
+        {tab === "documents" && (
+          <DocumentsForm form={form} onChange={onChange} />
         )}
       </Box>
     </Box>
