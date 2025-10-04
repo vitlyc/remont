@@ -6,11 +6,14 @@ const fmtDate = (v) => {
   const d = new Date(v);
   return Number.isNaN(d.getTime()) ? "" : d.toLocaleDateString("ru-RU");
 };
+
 const fmtNum = (n) => {
   if (n === "" || n == null) return "";
   const x = Number(n);
   return Number.isFinite(x) ? x.toLocaleString("ru-RU") : "";
 };
+
+// Ответчик
 const getDef = (arr = [], i = 0, key) => {
   const d = Array.isArray(arr) ? arr[i] : null;
   if (!d) return "";
@@ -21,11 +24,10 @@ const getDef = (arr = [], i = 0, key) => {
 async function findOrCreateFolder(folderName, parentFolderId) {
   const drive = getDrive();
 
-  // Попытка найти папку с нужным именем в указанной родительской папке
+  // Попытка найти папку с нужным именем в родительской папке (parentFolderId)
   const response = await drive.files.list({
-    q: `'${parentFolderId}' in parents and name = '${folderName}' and mimeType = 'application/vnd.google-apps.folder'`,
+    q: `name = '${folderName}' and mimeType = 'application/vnd.google-apps.folder' and '${parentFolderId}' in parents and trashed = false`, // добавлено условие trashed = false
     fields: "files(id, name)",
-    supportsAllDrives: true,
   });
 
   const existingFolder = response.data.files.find((file) => file.name === folderName);
@@ -34,15 +36,14 @@ async function findOrCreateFolder(folderName, parentFolderId) {
     return existingFolder.id; // Если папка существует, возвращаем её ID
   }
 
-  // Если папка не найдена, создаем новую в указанной родительской папке
+  // Если папка не найдена, создаем новую в родительской папке
   const { data: newFolder } = await drive.files.create({
     requestBody: {
       name: folderName,
       mimeType: "application/vnd.google-apps.folder",
-      parents: [parentFolderId], // Родительская папка
+      parents: [parentFolderId], // Папка внутри parentFolderId
     },
     fields: "id",
-    supportsAllDrives: true,
   });
 
   return newFolder.id; // Возвращаем ID новой папки
@@ -50,9 +51,9 @@ async function findOrCreateFolder(folderName, parentFolderId) {
 
 async function createCaseDocs(caseDoc = {}) {
   const templateId = process.env.GOOGLE_TEMPLATE_DOC_ID;
-  const parentFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID; // ID родительской папки
+  const parentFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID; // Используем родительскую папку для создания
+
   if (!templateId) throw new Error("GOOGLE_TEMPLATE_DOC_ID is not set");
-  if (!parentFolderId) throw new Error("GOOGLE_DRIVE_FOLDER_ID is not set");
 
   const drive = getDrive();
   const docs = getDocs();
@@ -61,17 +62,16 @@ async function createCaseDocs(caseDoc = {}) {
   const defendantName = `${getDef(caseDoc.defendants, 0, "surname")} ${getDef(caseDoc.defendants, 0, "name")} ${getDef(caseDoc.defendants, 0, "patronymic")}`;
 
   // 2) Проверяем наличие папки с таким названием в родительской папке
-  const folderName = `Судебный приказ - ${defendantName}`;
+  const folderName = `${defendantName} - Судебный приказ`;
   const targetFolderId = await findOrCreateFolder(folderName, parentFolderId);
 
-  const title = `Судебный приказ ${caseDoc?.object?.account}`;
+  const title = `Судебный приказ - ${caseDoc?.object?.account}`;
 
   // 3) Копируем шаблон в найденную или созданную папку
   const { data: copy } = await drive.files.copy({
     fileId: templateId,
-    requestBody: { name: title, parents: [targetFolderId] },
+    requestBody: { name: title, parents: [targetFolderId] }, // Указываем папку, в которой будет создан новый файл
     fields: "id, name, webViewLink",
-    supportsAllDrives: true,
   });
   const documentId = copy.id;
 
@@ -80,38 +80,40 @@ async function createCaseDocs(caseDoc = {}) {
 
   const replaceMap = {
     // Суд
-    "court.name": c.court?.name ?? "",
-    "court.address": c.court?.address ?? "",
+    "Наименование суда": c.court?.name ?? "",
+    "Адрес суда": c.court?.address ?? "",
 
     // Объект
-    "object.account": c.object?.account ?? "",
-    "object.area": c.object?.area ?? "",
-    "object.address": c.object?.address ?? "",
+    "ЛС": c.object?.account ?? "",
+    "Площадь": c.object?.area ?? "",
+    "Адрес объекта": c.object?.objectAddress ?? "",
 
     // Ответчик
-    "defendant[0].surname": getDef(c.defendants, 0, "surname"),
-    "defendant[0].name": getDef(c.defendants, 0, "name"),
-    "defendant[0].patronymic": getDef(c.defendants, 0, "patronymic"),
-    "defendant[0].birthday": getDef(c.defendants, 0, "birthday"),
-    "defendant[0].address": getDef(c.defendants, 0, "address"),
-    "defendant[0].share": getDef(c.defendants, 0, "share"),
-    "defendant[0].passport": getDef(c.defendants, 0, "passport"),
+    "ФИО": `${getDef(c.defendants, 0, "surname")} ${getDef(c.defendants, 0, "name")} ${getDef(c.defendants, 0, "patronymic")}`,
+    "Дата рождения": getDef(c.defendants, 0, "birthday"),
+    "Паспорт": getDef(c.defendants, 0, "passport"),
+    "Адрес регистрации": getDef(c.defendants, 0, "address"),
+    "Собственность": c.defendants[0].share == 1
+      ? "собственности"
+      : `долевой собственности (${c.defendants[0].share})`,
 
     // Долги
-    "debt.total": fmtNum(c.debt?.total),
-    "debt.duty": fmtNum(c.debt?.duty),
-    "debt.principal": fmtNum(c.debt?.principal),
-    "debt.penalty": fmtNum(c.debt?.penalty),
+    "Цена иска": fmtNum(c.debt?.total),
+    "Основной долг": fmtNum(c.debt?.principal),
+    "Пени": fmtNum(c.debt?.penalty),
+    "Госпошлина": fmtNum(c.debt?.duty),
 
     // Период
-    "debt.period.from": fmtDate(c.debt?.period?.from),
-    "debt.period.to": fmtDate(c.debt?.period?.to),
+    "Период взыскания": `с ${fmtDate(c.debt?.period?.from)} по ${fmtDate(c.debt?.period?.to)}`
   };
 
   // 5) Заменяем текст в документе
   const requests = Object.entries(replaceMap).map(([key, val]) => ({
     replaceAllText: {
-      containsText: { text: `{{${key}}}`, matchCase: false },
+      containsText: {
+        text: `{{${key}}}`, // Обратите внимание на точное соответствие с шаблоном
+        matchCase: false
+      },
       replaceText: String(val ?? ""),
     },
   }));

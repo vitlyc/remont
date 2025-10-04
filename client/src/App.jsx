@@ -1,35 +1,35 @@
-import { useState, useCallback } from "react";
-import { Routes, Route } from "react-router";
-import { Box, CssBaseline } from "@mui/material";
-import NavTabs from "./components/NavTabs/NavTabs";
-import DropdownButton from "./components/DropdownButton";
-import Cases from "./scenes/Cases";
-import Statistics from "./scenes/Statistics";
-import AppModal from "@/components/Modal/AppModal";
-import LoginForm from "@/components/Auth/LoginForm";
+import { useState, useCallback } from "react"
+import { Routes, Route } from "react-router"
+import { Box, CssBaseline } from "@mui/material"
+import NavTabs from "./components/NavTabs/NavTabs"
+import DropdownButton from "./components/DropdownButton"
+import Cases from "./scenes/Cases"
+import Statistics from "./scenes/Statistics"
+import AppModal from "@/components/Modal/AppModal"
+import LoginForm from "@/components/Auth/LoginForm"
 import {
   useLoginMutation,
   useMeQuery,
   useLogoutMutation,
-} from "@/store/authApi";
+} from "@/store/authApi"
 
 export default function App() {
-  const { data } = useMeQuery(); // гидрация по httpOnly-куке
-  const isLoggedIn = Boolean(data?.user);
+  const { data } = useMeQuery() // гидрация по httpOnly-куке
+  const isLoggedIn = Boolean(data?.user)
 
-  const [loginOpen, setLoginOpen] = useState(false);
-  const [logout] = useLogoutMutation();
+  const [loginOpen, setLoginOpen] = useState(false)
+  const [logout] = useLogoutMutation()
 
-  const openLogin = () => setLoginOpen(true);
-  const closeLogin = () => setLoginOpen(false);
+  const openLogin = () => setLoginOpen(true)
+  const closeLogin = () => setLoginOpen(false)
 
   const onLogout = useCallback(async () => {
     try {
-      await logout().unwrap();
+      await logout().unwrap()
     } catch (e) {
-      console.error(e);
+      console.error(e)
     }
-  }, [logout]);
+  }, [logout])
 
   return (
     <div className="app">
@@ -72,5 +72,5 @@ export default function App() {
         <LoginForm onClose={closeLogin} />
       </AppModal>
     </div>
-  );
+  )
 }
