@@ -1,4 +1,5 @@
 const { getDrive, getDocs } = require("./googleOAuth");
+const Case = require("../models/case");
 
 // Форматтеры
 const fmtDate = (v) => {
@@ -21,7 +22,7 @@ const getDef = (arr = [], i = 0, key) => {
   return d[key] ?? "";
 };
 
-async function findOrCreateFolder(folderName, parentFolderId) {
+async function findOrCreateFolder(folderName, parentFolderId, caseId) {
   const drive = getDrive();
 
   // Попытка найти папку с нужным именем в родительской папке (parentFolderId)
@@ -46,6 +47,24 @@ async function findOrCreateFolder(folderName, parentFolderId) {
     fields: "id",
   });
 
+  const newFolderLink = `https://drive.google.com/drive/folders/${newFolder.id}`;
+
+  try {
+    const updatedCase = await Case.findByIdAndUpdate(
+      caseId, // Используем ID дела, переданный в аргументах
+      { $set: { documents: newFolderLink } }, // Обновляем поле `documents`
+      { new: true } // Возвращаем обновленное дело
+    );
+
+    if (!updatedCase) {
+      console.error("Case not found");
+    } else {
+      console.log("Case updated successfully:", updatedCase);
+    }
+  } catch (error) {
+    console.error("Error updating case:", error);
+  }
+
   return newFolder.id; // Возвращаем ID новой папки
 }
 
@@ -62,8 +81,9 @@ async function createCaseDocs(caseDoc = {}) {
   const defendantName = `${getDef(caseDoc.defendants, 0, "surname")} ${getDef(caseDoc.defendants, 0, "name")} ${getDef(caseDoc.defendants, 0, "patronymic")}`;
 
   // 2) Проверяем наличие папки с таким названием в родительской папке
+  const caseId = caseDoc._id
   const folderName = `${defendantName} - Судебный приказ`;
-  const targetFolderId = await findOrCreateFolder(folderName, parentFolderId);
+  const targetFolderId = await findOrCreateFolder(folderName, parentFolderId, caseId);
 
   const title = `Судебный приказ - ${caseDoc?.object?.account}`;
 
@@ -133,3 +153,5 @@ async function createCaseDocs(caseDoc = {}) {
 }
 
 module.exports = { createCaseDocs };
+
+

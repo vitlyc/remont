@@ -5,7 +5,6 @@ exports.createDocument = async (req, res, next) => {
   try {
     const { caseId } = req.body || {};
     if (!caseId) return res.status(400).json({ error: "caseId is required" });
-    console.log(caseId);
 
     const userId = req.cookies?.uid;
     if (!userId)

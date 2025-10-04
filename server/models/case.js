@@ -37,6 +37,7 @@ const caseSchema = new mongoose.Schema(
     },
     comments: String,
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    documents: String,
   },
   { timestamps: true }
 );
