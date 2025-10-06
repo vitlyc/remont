@@ -24,27 +24,30 @@ export default function CaseForms({ form, onChange }) {
   }
 
   return (
-    <Box sx={{ minHeight: "55vh" }}>
-      <NavTabs
-        mode="static"
-        tabs={tabs}
-        value={tab}
-        onChange={handleTabChange}
-      />
-      <Box sx={{ mt: 2 }}>
-        {tab === "object" && (
-          <>
-            <ObjectForm form={form} onChange={onChange} />
-            <DefendantsForm form={form} onChange={onChange} />
-            <Comments></Comments>
-          </>
-        )}
-        {tab === "debt" && <DebtForm form={form} onChange={onChange} />}
-        {tab === "court" && <CourtForm form={form} onChange={onChange} />}
-
-        {tab === "documents" && (
-          <DocumentsForm form={form} onChange={onChange} />
-        )}
+    <Box sx={{ height: "65vh", display: "flex", flexDirection: "column" }}>
+      <Box>
+        <NavTabs
+          mode="static"
+          tabs={tabs}
+          value={tab}
+          onChange={handleTabChange}
+        />
+        <Box sx={{ mt: 2 }}>
+          {tab === "object" && (
+            <>
+              <ObjectForm form={form} onChange={onChange} />
+              <DefendantsForm form={form} onChange={onChange} />
+            </>
+          )}
+          {tab === "debt" && <DebtForm form={form} onChange={onChange} />}
+          {tab === "court" && <CourtForm form={form} onChange={onChange} />}
+          {tab === "documents" && (
+            <DocumentsForm form={form} onChange={onChange} />
+          )}
+        </Box>
+      </Box>
+      <Box sx={{ marginTop: "auto", paddingTop: "16px" }}>
+        <Comments />
       </Box>
     </Box>
   )
