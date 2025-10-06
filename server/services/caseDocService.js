@@ -48,6 +48,7 @@ async function findOrCreateFolder(folderName, parentFolderId, caseId) {
   });
 
   const newFolderLink = `https://drive.google.com/drive/folders/${newFolder.id}`;
+  // console.log(caseId, newFolderLink);
 
   try {
     const updatedCase = await Case.findByIdAndUpdate(
@@ -81,7 +82,7 @@ async function createCaseDocs(caseDoc = {}) {
   const defendantName = `${getDef(caseDoc.defendants, 0, "surname")} ${getDef(caseDoc.defendants, 0, "name")} ${getDef(caseDoc.defendants, 0, "patronymic")}`;
 
   // 2) Проверяем наличие папки с таким названием в родительской папке
-  const caseId = caseDoc._id
+  const caseId = caseDoc._id.toString()
   const folderName = `${defendantName} - Судебный приказ`;
   const targetFolderId = await findOrCreateFolder(folderName, parentFolderId, caseId);
 
